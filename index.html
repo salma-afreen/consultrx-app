@@ -94,13 +94,17 @@ border-radius:6px;
 
 <!-- DOCTOR SECTION -->
 
-<div id="doctorSection" class="card" style="display:none">
+<div id="prescriptionSection" class="card" style="display:none">
 
-<h2>Doctor Dashboard</h2>
+<h2>Write Prescription</h2>
 
-<div id="doctorPatients"></div>
+<p id="selectedPatient"></p>
 
-</div>
+<textarea id="prescriptionText" placeholder="Write prescription here..." style="width:90%; height:100px;"></textarea>
+
+<br><br>
+
+<button onclick="submitPrescription()">Submit Prescription</button>
 
 </div>
 
@@ -109,6 +113,9 @@ border-radius:6px;
 
 var patients = [];
 
+  var currentPatientIndex = null;
+var completedCount = 0;
+  
 function showPatient(){
 
 document.getElementById("patientSection").style.display="block";
@@ -188,19 +195,60 @@ document.getElementById("doctorPatients").innerHTML=output;
 
 function reviewPatient(index){
 
-patients[index].status="Under Review";
+currentPatientIndex = index;
+
+patients[index].status = "Under Review";
+
+document.getElementById("prescriptionSection").style.display = "block";
+
+document.getElementById("selectedPatient").innerText =
+"Patient: " + patients[index].name;
+
+  var output = "<h3>Completed Patients: " + completedCount + "</h3>";
+renderDoctor();
+function renderPatientStatus(){
+
+var output="";
+
+for(var i=0;i<patients.length;i++){
+
+output += "<div class='patient'>" +
+patients[i].name + " - Status: " + patients[i].status;
+
+if(patients[i].status === "Completed"){
+output += "<br><button onclick='viewPrescription("+i+")'>View Prescription</button>";
+}
+
+output += "</div>";
+}
+
+document.getElementById("patientStatus").innerHTML=output;
+
+}
+  function submitPrescription(){
+
+var text = document.getElementById("prescriptionText").value;
+
+patients[currentPatientIndex].prescription = text;
+patients[currentPatientIndex].status = "Completed";
+
+completedCount++;
+
+document.getElementById("prescriptionSection").style.display = "none";
 
 renderDoctor();
 renderPatientStatus();
 
-var prescription=prompt("Enter prescription:");
+}
+  function viewPrescription(index){
 
-patients[index].prescription=prescription;
+var text = patients[index].prescription;
 
-patients[index].status="Completed";
+var newWindow = window.open();
 
-renderDoctor();
-renderPatientStatus();
+newWindow.document.write("<h2>Prescription</h2>");
+newWindow.document.write("<p>" + text + "</p>");
+newWindow.document.write("<button onclick='window.print()'>Download PDF</button>");
 
 }
 
