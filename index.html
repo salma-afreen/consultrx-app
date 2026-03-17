@@ -64,43 +64,44 @@ border-radius:6px;
 <div class="container">
 
 <h1>ConsultRx 🏥</h1>
-<p>Remote Consultation Prototype</p>
 
 <button onclick="showPatient()">Patient</button>
 <button onclick="showDoctor()">Doctor</button>
 
 <!-- PATIENT SECTION -->
-
 <div id="patientSection" class="card">
 
 <h2>Patient Form</h2>
 
 <input type="text" id="pName" placeholder="Name"><br>
-
 <input type="number" id="pAge" placeholder="Age"><br>
-
 <input type="text" id="pPhone" placeholder="Phone"><br>
-
 <input type="text" id="pComplaint" placeholder="Complaint"><br>
 
 <button onclick="submitPatient()">Submit</button>
 
 <h3>Your Consultation Status</h3>
-
 <div id="patientStatus"></div>
 
 </div>
 
-
 <!-- DOCTOR SECTION -->
+<div id="doctorSection" class="card" style="display:none">
 
+<h2>Doctor Dashboard</h2>
+
+<div id="doctorPatients"></div>
+
+</div>
+
+<!-- PRESCRIPTION SECTION -->
 <div id="prescriptionSection" class="card" style="display:none">
 
 <h2>Write Prescription</h2>
 
 <p id="selectedPatient"></p>
 
-<textarea id="prescriptionText" placeholder="Write prescription here..." style="width:90%; height:100px;"></textarea>
+<textarea id="prescriptionText" style="width:90%; height:100px;"></textarea>
 
 <br><br>
 
@@ -112,26 +113,20 @@ border-radius:6px;
 <script>
 
 var patients = [];
-
-  var currentPatientIndex = null;
+var currentPatientIndex = null;
 var completedCount = 0;
-  
-function showPatient(){
 
+function showPatient(){
 document.getElementById("patientSection").style.display="block";
 document.getElementById("doctorSection").style.display="none";
-
+document.getElementById("prescriptionSection").style.display="none";
 renderPatientStatus();
-
 }
 
 function showDoctor(){
-
 document.getElementById("patientSection").style.display="none";
 document.getElementById("doctorSection").style.display="block";
-
 renderDoctor();
-
 }
 
 function submitPatient(){
@@ -146,66 +141,9 @@ prescription:""
 };
 
 patients.push(patient);
-
 renderPatientStatus();
-
 }
 
-function renderPatientStatus(){
-
-var output="";
-
-for(var i=0;i<patients.length;i++){
-
-output += "<div class='patient'>" +
-patients[i].name + " - Status: " + patients[i].status +
-"</div>";
-
-}
-
-document.getElementById("patientStatus").innerHTML=output;
-
-}
-
-function renderDoctor(){
-
-var output="";
-
-for(var i=0;i<patients.length;i++){
-
-output += "<div class='patient'>" +
-
-"<b>"+patients[i].name+"</b><br>" +
-
-"Age: "+patients[i].age+"<br>" +
-
-"Complaint: "+patients[i].complaint+"<br>" +
-
-"Status: "+patients[i].status+"<br><br>" +
-
-"<button onclick='reviewPatient("+i+")'>Review Patient</button>" +
-
-"</div>";
-
-}
-
-document.getElementById("doctorPatients").innerHTML=output;
-
-}
-
-function reviewPatient(index){
-
-currentPatientIndex = index;
-
-patients[index].status = "Under Review";
-
-document.getElementById("prescriptionSection").style.display = "block";
-
-document.getElementById("selectedPatient").innerText =
-"Patient: " + patients[index].name;
-
-  var output = "<h3>Completed Patients: " + completedCount + "</h3>";
-renderDoctor();
 function renderPatientStatus(){
 
 var output="";
@@ -223,9 +161,45 @@ output += "</div>";
 }
 
 document.getElementById("patientStatus").innerHTML=output;
-
 }
-  function submitPrescription(){
+
+function renderDoctor(){
+
+var output = "<h3>Completed Patients: " + completedCount + "</h3>";
+
+for(var i=0;i<patients.length;i++){
+
+output += "<div class='patient'>" +
+
+"<b>"+patients[i].name+"</b><br>" +
+"Age: "+patients[i].age+"<br>" +
+"Complaint: "+patients[i].complaint+"<br>" +
+"Status: "+patients[i].status+"<br><br>" +
+
+"<button onclick='reviewPatient("+i+")'>Review Patient</button>" +
+
+"</div>";
+}
+
+document.getElementById("doctorPatients").innerHTML=output;
+}
+
+function reviewPatient(index){
+
+currentPatientIndex = index;
+
+patients[index].status = "Under Review";
+
+document.getElementById("prescriptionSection").style.display = "block";
+
+document.getElementById("selectedPatient").innerText =
+"Patient: " + patients[index].name;
+
+renderDoctor();
+renderPatientStatus();
+}
+
+function submitPrescription(){
 
 var text = document.getElementById("prescriptionText").value;
 
@@ -238,9 +212,9 @@ document.getElementById("prescriptionSection").style.display = "none";
 
 renderDoctor();
 renderPatientStatus();
-
 }
-  function viewPrescription(index){
+
+function viewPrescription(index){
 
 var text = patients[index].prescription;
 
@@ -249,10 +223,8 @@ var newWindow = window.open();
 newWindow.document.write("<h2>Prescription</h2>");
 newWindow.document.write("<p>" + text + "</p>");
 newWindow.document.write("<button onclick='window.print()'>Download PDF</button>");
-
 }
 
 </script>
-
 </body>
 </html>
