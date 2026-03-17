@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ConsultRx</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#f4f4f4;
+text-align:center;
+padding:20px;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+}
+
+.card{
+background:white;
+padding:20px;
+margin:20px 0;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+input{
+padding:10px;
+width:80%;
+margin:8px 0;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+button{
+padding:10px 20px;
+margin:10px;
+font-size:16px;
+background:#16a085;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#13856b;
+}
+
+.patient{
+background:#ecf9f6;
+padding:10px;
+margin:8px 0;
+border-radius:6px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>ConsultRx 🏥</h1>
+<p>Remote Consultation Prototype</p>
+
+<button onclick="showPatient()">Patient</button>
+<button onclick="showDoctor()">Doctor</button>
+
+<!-- PATIENT SECTION -->
+
+<div id="patientSection" class="card">
+
+<h2>Patient Form</h2>
+
+<input type="text" id="pName" placeholder="Name"><br>
+
+<input type="number" id="pAge" placeholder="Age"><br>
+
+<input type="text" id="pPhone" placeholder="Phone"><br>
+
+<input type="text" id="pComplaint" placeholder="Complaint"><br>
+
+<button onclick="submitPatient()">Submit</button>
+
+<h3>Your Consultation Status</h3>
+
+<div id="patientStatus"></div>
+
+</div>
+
+
+<!-- DOCTOR SECTION -->
+
+<div id="doctorSection" class="card" style="display:none">
+
+<h2>Doctor Dashboard</h2>
+
+<div id="doctorPatients"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+var patients = [];
+
+function showPatient(){
+
+document.getElementById("patientSection").style.display="block";
+document.getElementById("doctorSection").style.display="none";
+
+renderPatientStatus();
+
+}
+
+function showDoctor(){
+
+document.getElementById("patientSection").style.display="none";
+document.getElementById("doctorSection").style.display="block";
+
+renderDoctor();
+
+}
+
+function submitPatient(){
+
+var patient={
+name:document.getElementById("pName").value,
+age:document.getElementById("pAge").value,
+phone:document.getElementById("pPhone").value,
+complaint:document.getElementById("pComplaint").value,
+status:"Waiting",
+prescription:""
+};
+
+patients.push(patient);
+
+renderPatientStatus();
+
+}
+
+function renderPatientStatus(){
+
+var output="";
+
+for(var i=0;i<patients.length;i++){
+
+output += "<div class='patient'>" +
+patients[i].name + " - Status: " + patients[i].status +
+"</div>";
+
+}
+
+document.getElementById("patientStatus").innerHTML=output;
+
+}
+
+function renderDoctor(){
+
+var output="";
+
+for(var i=0;i<patients.length;i++){
+
+output += "<div class='patient'>" +
+
+"<b>"+patients[i].name+"</b><br>" +
+
+"Age: "+patients[i].age+"<br>" +
+
+"Complaint: "+patients[i].complaint+"<br>" +
+
+"Status: "+patients[i].status+"<br><br>" +
+
+"<button onclick='reviewPatient("+i+")'>Review Patient</button>" +
+
+"</div>";
+
+}
+
+document.getElementById("doctorPatients").innerHTML=output;
+
+}
+
+function reviewPatient(index){
+
+patients[index].status="Under Review";
+
+renderDoctor();
+renderPatientStatus();
+
+var prescription=prompt("Enter prescription:");
+
+patients[index].prescription=prescription;
+
+patients[index].status="Completed";
+
+renderDoctor();
+renderPatientStatus();
+
+}
+
+</script>
+
+</body>
+</html>
