@@ -25,7 +25,7 @@ border-radius:10px;
 box-shadow:0 2px 8px rgba(0,0,0,0.1);
 }
 
-input{
+input, textarea{
 padding:10px;
 width:80%;
 margin:8px 0;
@@ -64,6 +64,7 @@ border-radius:6px;
 <div class="container">
 
 <h1>ConsultRx 🏥</h1>
+<p>Remote Consultation Prototype</p>
 
 <button onclick="showPatient()">Patient</button>
 <button onclick="showDoctor()">Doctor</button>
@@ -101,7 +102,7 @@ border-radius:6px;
 
 <p id="selectedPatient"></p>
 
-<textarea id="prescriptionText" style="width:90%; height:100px;"></textarea>
+<textarea id="prescriptionText" placeholder="Write prescription here..." style="height:100px;"></textarea>
 
 <br><br>
 
@@ -109,12 +110,14 @@ border-radius:6px;
 
 </div>
 
+</div>
 
 <script>
 
 var patients = [];
 var currentPatientIndex = null;
 var completedCount = 0;
+var doctorName = "Dr. Smith"; // change later
 
 function showPatient(){
 document.getElementById("patientSection").style.display="block";
@@ -126,6 +129,7 @@ renderPatientStatus();
 function showDoctor(){
 document.getElementById("patientSection").style.display="none";
 document.getElementById("doctorSection").style.display="block";
+document.getElementById("prescriptionSection").style.display="none";
 renderDoctor();
 }
 
@@ -141,6 +145,7 @@ prescription:""
 };
 
 patients.push(patient);
+
 renderPatientStatus();
 }
 
@@ -216,15 +221,90 @@ renderPatientStatus();
 
 function viewPrescription(index){
 
-var text = patients[index].prescription;
+var p = patients[index];
+var today = new Date().toLocaleDateString();
 
 var newWindow = window.open();
 
-newWindow.document.write("<h2>Prescription</h2>");
-newWindow.document.write("<p>" + text + "</p>");
-newWindow.document.write("<button onclick='window.print()'>Download PDF</button>");
+newWindow.document.write(`
+<html>
+<head>
+<title>Prescription</title>
+
+<style>
+body{
+font-family: Arial;
+padding: 20px;
+}
+
+.header{
+text-align:center;
+border-bottom:2px solid #16a085;
+padding-bottom:10px;
+margin-bottom:20px;
+}
+
+.section{
+margin-bottom:15px;
+}
+
+.label{
+font-weight:bold;
+}
+
+.signature{
+margin-top:40px;
+}
+
+button{
+margin-top:20px;
+padding:10px 20px;
+background:#16a085;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+<h1>ConsultRx 🏥</h1>
+<p>Remote Medical Prescription</p>
+</div>
+
+<div class="section">
+<span class="label">Date:</span> ${today}
+</div>
+
+<div class="section">
+<span class="label">Patient Name:</span> ${p.name}<br>
+<span class="label">Age:</span> ${p.age}<br>
+<span class="label">Phone:</span> ${p.phone}<br>
+<span class="label">Complaint:</span> ${p.complaint}
+</div>
+
+<div class="section">
+<span class="label">Prescription:</span>
+<p>${p.prescription}</p>
+</div>
+
+<div class="signature">
+<p><b>${doctorName}</b></p>
+<p>Signature: ______________________</p>
+</div>
+
+<button onclick="window.print()">Download / Print PDF</button>
+
+</body>
+</html>
+`);
 }
 
 </script>
+
 </body>
 </html>
